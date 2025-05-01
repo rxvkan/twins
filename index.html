@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twins</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            background: #000;
+            color: white;
+        }
+
+        #video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            filter: brightness(0.3) grayscale(20%);
+            object-fit: cover;
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .click-prompt {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            padding: 1rem 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            animation: pulse 2.5s infinite;
+        }
+
+        .click-prompt:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.98); }
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
+            min-height: 100vh;
+            padding: 3rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease;
+        }
+
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .profile-card {
+            background: rgba(15, 15, 15, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 24px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            margin: 1rem;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: 0 0 40px rgba(255,255,255,0.05);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            object-fit: cover;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.03) rotate(2deg);
+            box-shadow: 0 0 50px rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .username {
+            font-size: 2.4rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.7rem 1.4rem;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50px;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .badge:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+
+        .details {
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            font-size: 1.6rem;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            color: #fff;
+            transform: scale(1.15);
+        }
+
+        .twins-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            opacity: 0.4;
+            font-weight: 300;
+            text-transform: uppercase;
+            pointer-events: none;
+            animation: floatText 8s infinite linear;
+        }
+
+        @keyframes floatText {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-3deg); }
+            50% { transform: translate(-50%, -52%) rotate(3deg); }
+        }
+
+        .audio-control {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 1.5rem;
+            }
+            
+            .profile-card {
+                max-width: 100%;
+                margin: 1rem 0;
+            }
+            
+            .click-prompt {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-screen" id="splashScreen">
+        <div class="click-prompt">Clique para iniciar</div>
+    </div>
+
+    <video autoplay muted loop id="video-bg">
+        <source src="img/background.mp4" type="video/mp4">
+    </video>
+
+    <audio id="bg-music" loop>
+        <source src="audio/background.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container" id="mainContainer">
+        <div class="twins-text"></div>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <img src="img/avatar.png" class="profile-pic" alt="UFGG">
+                <h1 class="username">rakan</h1>
+                <div class="badge">ufgg</div>
+            </div>
+            <div class="details">
+                <p>4+ Years of developing<br>
+                Javascript | HTML | CSS | SQL | LuaU<br>
+                16 pt-br</p>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <img src="img/avatar2.png" class="profile-pic" alt="mateuxl">
+                <h1 class="username">mateuxl</h1>
+                <div class="badge">gozei4</div>
+            </div>
+            <div class="details">
+                <p>10+ Years of fishing<br>
+                maior pegador de tilapia de uberlandia<br>
+                17 br</p>
+            </div>   
+        </div>
+    </div>
+
+    <div class="audio-control" id="musicControl">
+        <i class="fas fa-volume-up"></i>
+    </div>
+
+    <script>
+        const splashScreen = document.getElementById('splashScreen');
+        const mainContainer = document.getElementById('mainContainer');
+        const bgMusic = document.getElementById('bg-music');
+        const musicControl = document.getElementById('musicControl');
+
+        splashScreen.addEventListener('click', () => {
+            bgMusic.play();
+            splashScreen.style.opacity = '0';
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                mainContainer.classList.add('visible');
+            }, 1200);
+
+            document.addEventListener('mousemove', (e) => {
+                const cards = document.querySelectorAll('.profile-card');
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const xAxis = (rect.width/2 - (e.pageX - rect.left)) / 25;
+                    const yAxis = (rect.height/2 - (e.pageY - rect.top)) / 25;
+                    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                });
+            });
+        });
+
+        document.querySelector('.container').addEventListener('mouseleave', () => {
+            document.querySelectorAll('.profile-card').forEach(card => {
+                card.style.transform = 'rotateY(0) rotateX(0)';
+            });
+        });
+
+        musicControl.addEventListener('click', () => {
+            bgMusic.muted = !bgMusic.muted;
+            musicControl.innerHTML = bgMusic.muted ? 
+                '<i class="fas fa-volume-mute"></i>' : 
+                '<i class="fas fa-volume-up"></i>';
+        });
+
+        const twinsText = document.querySelector('.twins-text');
+        let letters = ['f', 'r', ' ', 't', 'w', 'i', 'n', 's'];
+        let count = 0;
+        
+        function typeEffect() {
+            if (count < letters.length) {
+                twinsText.textContent += letters[count];
+                count++;
+                setTimeout(typeEffect, 100);
+            }
+        }
+        setTimeout(typeEffect, 1500);
+    </script>
+</body>
+</html>
