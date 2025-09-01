@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twins</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,11 +14,22 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        :root {
+            --primary: rgba(255, 255, 255, 0.9);
+            --secondary: rgba(255, 255, 255, 0.7);
+            --tertiary: rgba(255, 255, 255, 0.5);
+            --background: rgba(15, 15, 15, 0.4);
+            --accent: rgba(255, 255, 255, 0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
         body {
             font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
             background: #000;
             color: white;
+            min-height: 100vh;
+            perspective: 1000px;
         }
 
         #video-bg {
@@ -26,9 +38,23 @@
             bottom: 0;
             min-width: 100%;
             min-height: 100%;
-            z-index: -1;
-            filter: brightness(0.3) grayscale(20%);
+            z-index: -2;
+            filter: brightness(0.25) contrast(1.2);
             object-fit: cover;
+            transform: scale(1.02);
+            transition: filter 1.2s ease;
+        }
+
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(40, 40, 60, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(60, 40, 40, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         .splash-screen {
@@ -37,38 +63,111 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0, 0, 0, 0.95);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 1.2s ease;
+            backdrop-filter: blur(0px);
         }
 
-        .click-prompt {
-            font-size: 1.8rem;
-            font-weight: 300;
-            letter-spacing: 4px;
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-container {
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 8px;
             text-transform: uppercase;
+            background: linear-gradient(45deg, #fff, #aaa, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shimmer 3s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .start-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
+            transition: var(--transition);
             position: relative;
-            padding: 1rem 2rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50px;
-            background: rgba(255,255,255,0.05);
+            overflow: hidden;
             backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            animation: pulse 2.5s infinite;
+            box-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
+            animation: pulse 2.5s infinite ease-in-out;
         }
 
-        .click-prompt:hover {
-            background: rgba(255,255,255,0.1);
+        .start-button:hover {
             transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.9; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.98); }
+        .start-button::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+        }
+
+        .start-button:hover::before {
+            animation: shimmerEffect 1.5s infinite;
+        }
+
+        @keyframes shimmerEffect {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .start-icon {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+        }
+
+        .start-button:hover .start-icon {
+            transform: rotate(90deg);
+        }
+
+        .hint-text {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: fadeInOut 2s infinite ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
         }
 
         .container {
@@ -90,18 +189,19 @@
         }
 
         .profile-card {
-            background: rgba(15, 15, 15, 0.4);
+            background: var(--background);
             backdrop-filter: blur(20px) saturate(180%);
             border-radius: 24px;
             padding: 2.5rem;
             width: 100%;
             max-width: 420px;
             transform-style: preserve-3d;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.08);
+            transition: var(--transition);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
             margin: 1rem;
+            overflow: hidden;
         }
 
         .profile-card::before {
@@ -110,7 +210,7 @@
             inset: 0;
             border-radius: 24px;
             padding: 1px;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.1));
             -webkit-mask: 
                 linear-gradient(#fff 0 0) content-box, 
                 linear-gradient(#fff 0 0);
@@ -119,6 +219,16 @@
                 linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .profile-card:hover::before {
+            opacity: 1;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px) rotateX(2deg) rotateY(2deg);
         }
 
         .profile-header {
@@ -127,53 +237,98 @@
             position: relative;
         }
 
-        .profile-pic {
+        .profile-pic-container {
+            position: relative;
             width: 140px;
             height: 140px;
-            border-radius: 50%;
             margin: 0 auto 1.5rem;
-            border: 2px solid rgba(255,255,255,0.15);
-            box-shadow: 0 0 40px rgba(255,255,255,0.05);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            object-fit: cover;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6a5acd, #ff6b81);
+            padding: 3px;
+            transition: var(--transition);
         }
 
-        .profile-pic:hover {
-            transform: scale(1.03) rotate(2deg);
-            box-shadow: 0 0 50px rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.3);
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: var(--transition);
+        }
+
+        .profile-pic-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-pic-container:hover .profile-pic {
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .username {
             font-size: 2.4rem;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 0.5rem;
             background: linear-gradient(45deg, #fff, #aaa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .username::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            transition: width 0.5s ease;
+        }
+
+        .profile-card:hover .username::after {
+            width: 100%;
         }
 
         .badge {
             display: inline-block;
             padding: 0.7rem 1.4rem;
-            background: rgba(255,255,255,0.08);
+            background: rgba(114, 137, 218, 0.9);
             border-radius: 50px;
             margin: 0.5rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .badge:hover::before {
+            left: 100%;
         }
 
         .badge:hover {
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             transform: translateY(-2px);
         }
 
         .details {
-            color: rgba(255,255,255,0.85);
+            color: var(--secondary);
             line-height: 1.7;
             margin-bottom: 1.8rem;
             font-size: 0.95rem;
@@ -181,22 +336,235 @@
             font-weight: 300;
         }
 
+        .social-section {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .social-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
         .social-links {
             display: flex;
             justify-content: center;
             gap: 1.2rem;
-            margin-top: 2rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--primary);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .social-link:hover::before {
+            transform: translateX(100%);
         }
 
         .social-icon {
-            font-size: 1.6rem;
-            color: rgba(255,255,255,0.7);
-            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            z-index: 1;
         }
 
-        .social-icon:hover {
-            color: #fff;
-            transform: scale(1.15);
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .audio-panel {
+            position: fixed;
+            bottom: 80px;
+            right: 25px;
+            background: var(--background);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transform: translateY(20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 999;
+            width: 250px;
+        }
+
+        .audio-panel.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .panel-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .audio-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            min-width: 70px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .audio-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--background);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .audio-toggle:hover {
+            transform: scale(1.1) rotate(30deg);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .audio-icon {
+            font-size: 1.2rem;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .theme-toggle {
+            margin-top: 2vh;
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--background);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-icon {
+            font-size: 1.2rem;
+            color: var(--primary);
         }
 
         .twins-text {
@@ -218,49 +586,60 @@
             50% { transform: translate(-50%, -52%) rotate(3deg); }
         }
 
-        .audio-control {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            color: white;
-            cursor: pointer;
-            z-index: 1000;
-            padding: 0.8rem;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .audio-control:hover {
-            background: rgba(255,255,255,0.15);
-            transform: scale(1.1);
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
                 padding: 1.5rem;
+                gap: 2rem;
             }
             
             .profile-card {
                 max-width: 100%;
-                margin: 1rem 0;
+                margin: 0.5rem 0;
+                padding: 1.8rem;
             }
-            
-            .click-prompt {
-                font-size: 1.4rem;
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .audio-panel {
+                width: 80%;
+                right: 10%;
+                left: 10%;
             }
         }
     </style>
 </head>
 <body>
     <div class="splash-screen" id="splashScreen">
-        <div class="click-prompt">Clique para iniciar</div>
+        <div class="logo-container">
+            <div class="logo">TWINS</div>
+        </div>
+        <div class="start-button" id="startButton">
+            <i class="fas fa-chevron-down start-icon"></i>
+        </div>
+        <div class="hint-text">Toque para começar</div>
     </div>
 
     <video autoplay muted loop id="video-bg">
         <source src="img/background.mp4" type="video/mp4">
     </video>
+
+    <div class="gradient-overlay"></div>
+
+    <div class="floating-particles" id="particlesContainer"></div>
 
     <audio id="bg-music" loop>
         <source src="audio/background.mp3" type="audio/mpeg">
@@ -271,8 +650,10 @@
 
         <div class="profile-card">
             <div class="profile-header">
-                <img src="img/avatar.png" class="profile-pic" alt="UFGG">
-                <h1 class="username">rodrigay</h1>
+                <div class="profile-pic-container">
+                    <img src="img/avatar.png" class="profile-pic" alt="UFGG">
+                </div>
+                <h1 class="username">rakan</h1>
                 <div class="badge">ufgg</div>
             </div>
             <div class="details">
@@ -280,76 +661,237 @@
                 Javascript | HTML | CSS | SQL | LuaU<br>
                 16 pt-br</p>
             </div>
+            <div class="social-section">
+                <div class="social-title">Redes Sociais</div>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/rockingninejeans" target="_blank" class="social-link">
+                        <i class="fab fa-instagram social-icon"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div class="profile-card">
             <div class="profile-header">
-                <img src="img/avatar2.png" class="profile-pic" alt="mateuxl">
+                <div class="profile-pic-container">
+                    <img src="img/avatar2.png" class="profile-pic" alt="mateuxl">
+                </div>
                 <h1 class="username">mateuxl</h1>
-                <div class="badge">bfg4</div>
+                <div class="badge">gozei4</div>
             </div>
             <div class="details">
                 <p>10+ Years of fishing<br>
                 maior pegador de tilapia de uberlandia<br>
                 17 br</p>
-            </div>   
+            </div>
+            <div class="social-section">
+                <div class="social-title">Redes Sociais</div>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/crymewithdiamonds" target="_blank" class="social-link">
+                        <i class="fab fa-instagram social-icon"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="audio-control" id="musicControl">
-        <i class="fas fa-volume-up"></i>
+    <div class="audio-panel" id="audioPanel">
+        <div class="panel-title">Configurações de Áudio</div>
+        <div class="audio-controls">
+            <div class="control-group">
+                <label for="volumeControl">Volume</label>
+                <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+            </div>
+            <div class="control-group">
+                <label for="playbackRate">Velocidade</label>
+                <input type="range" id="playbackRate" min="0.5" max="1.5" step="0.05" value="1">
+            </div>
+        </div>
+    </div>
+
+    <div class="audio-toggle" id="audioToggle">
+        <i class="fas fa-volume-up audio-icon" id="audioIcon"></i>
+    </div>
+
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon theme-icon" id="themeIcon"></i>
     </div>
 
     <script>
         const splashScreen = document.getElementById('splashScreen');
         const mainContainer = document.getElementById('mainContainer');
+        const startButton = document.getElementById('startButton');
         const bgMusic = document.getElementById('bg-music');
-        const musicControl = document.getElementById('musicControl');
-
-        splashScreen.addEventListener('click', () => {
+        const audioToggle = document.getElementById('audioToggle');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioPanel = document.getElementById('audioPanel');
+        const volumeControl = document.getElementById('volumeControl');
+        const playbackRate = document.getElementById('playbackRate');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const videoBg = document.getElementById('video-bg');
+        const particlesContainer = document.getElementById('particlesContainer');
+        
+        let isAudioPanelVisible = false;
+        let isDarkTheme = true;
+        
+        function initParticles() {
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                const size = Math.random() * 3 + 2;
+                
+                const delay = Math.random() * 15;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        function startExperience() {
             bgMusic.play();
-            splashScreen.style.opacity = '0';
+            splashScreen.classList.add('hidden');
+            
             setTimeout(() => {
                 splashScreen.style.display = 'none';
                 mainContainer.classList.add('visible');
             }, 1200);
-
+            
+            initCardTiltEffect();
+            
+            initParticles();
+            
+            initTwinsText();
+        }
+        
+        function initCardTiltEffect() {
+            const cards = document.querySelectorAll('.profile-card');
+            
             document.addEventListener('mousemove', (e) => {
-                const cards = document.querySelectorAll('.profile-card');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
                 cards.forEach(card => {
                     const rect = card.getBoundingClientRect();
-                    const xAxis = (rect.width/2 - (e.pageX - rect.left)) / 25;
-                    const yAxis = (rect.height/2 - (e.pageY - rect.top)) / 25;
-                    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                    const cardX = rect.left + rect.width / 2;
+                    const cardY = rect.top + rect.height / 2;
+                    
+                    const angleX = (e.clientY - cardY) / 20;
+                    const angleY = (cardX - e.clientX) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateZ(10px)`;
                 });
             });
-        });
-
-        document.querySelector('.container').addEventListener('mouseleave', () => {
-            document.querySelectorAll('.profile-card').forEach(card => {
-                card.style.transform = 'rotateY(0) rotateX(0)';
+            
+            document.addEventListener('mouseleave', () => {
+                cards.forEach(card => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                });
             });
-        });
-
-        musicControl.addEventListener('click', () => {
-            bgMusic.muted = !bgMusic.muted;
-            musicControl.innerHTML = bgMusic.muted ? 
-                '<i class="fas fa-volume-mute"></i>' : 
-                '<i class="fas fa-volume-up"></i>';
-        });
-
-        const twinsText = document.querySelector('.twins-text');
-        let letters = ['f', 'r', ' ', 't', 'w', 'i', 'n', 's'];
-        let count = 0;
+        }
         
-        function typeEffect() {
-            if (count < letters.length) {
-                twinsText.textContent += letters[count];
-                count++;
-                setTimeout(typeEffect, 100);
+        function initTwinsText() {
+            const twinsText = document.querySelector('.twins-text');
+            const text = "twins";
+            let index = 0;
+            
+            function type() {
+                if (index < text.length) {
+                    twinsText.textContent += text.charAt(index);
+                    index++;
+                    setTimeout(type, 150);
+                } else {
+                    twinsText.style.borderRight = "2px solid rgba(255,255,255,0.5)";
+                    setInterval(() => {
+                        twinsText.style.borderRightColor = twinsText.style.borderRightColor === 'rgba(255,255,255,0.5)' ? 
+                                                          'transparent' : 'rgba(255,255,255,0.5)';
+                    }, 500);
+                }
+            }
+            
+            setTimeout(type, 1000);
+        }
+        
+        function toggleAudioPanel() {
+            isAudioPanelVisible = !isAudioPanelVisible;
+            
+            if (isAudioPanelVisible) {
+                audioPanel.classList.add('visible');
+            } else {
+                audioPanel.classList.remove('visible');
             }
         }
-        setTimeout(typeEffect, 1500);
+        
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            
+            if (isDarkTheme) {
+                document.documentElement.style.setProperty('--primary', 'rgba(255, 255, 255, 0.9)');
+                document.documentElement.style.setProperty('--secondary', 'rgba(255, 255, 255, 0.7)');
+                document.documentElement.style.setProperty('--tertiary', 'rgba(255, 255, 255, 0.5)');
+                document.documentElement.style.setProperty('--background', 'rgba(15, 15, 15, 0.4)');
+                document.documentElement.style.setProperty('--accent', 'rgba(255, 255, 255, 0.1)');
+                videoBg.style.filter = 'brightness(0.25) contrast(1.2)';
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.documentElement.style.setProperty('--primary', 'rgba(0, 0, 0, 0.9)');
+                document.documentElement.style.setProperty('--secondary', 'rgba(0, 0, 0, 0.7)');
+                document.documentElement.style.setProperty('--tertiary', 'rgba(0, 0, 0, 0.5)');
+                document.documentElement.style.setProperty('--background', 'rgba(255, 255, 255, 0.4)');
+                document.documentElement.style.setProperty('--accent', 'rgba(0, 0, 0, 0.1)');
+                videoBg.style.filter = 'brightness(0.6) contrast(1.2)';
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        }
+        
+        startButton.addEventListener('click', startExperience);
+        
+        audioToggle.addEventListener('click', () => {
+            bgMusic.muted = !bgMusic.muted;
+            audioIcon.className = bgMusic.muted ? 
+                'fas fa-volume-mute audio-icon' : 
+                'fas fa-volume-up audio-icon';
+                
+            if (!bgMusic.muted) {
+                toggleAudioPanel();
+            }
+        });
+        
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        volumeControl.addEventListener('input', () => {
+            bgMusic.volume = volumeControl.value;
+        });
+        
+        playbackRate.addEventListener('input', () => {
+            bgMusic.playbackRate = playbackRate.value;
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (isAudioPanelVisible && 
+                !audioPanel.contains(e.target) && 
+                !audioToggle.contains(e.target)) {
+                toggleAudioPanel();
+            }
+        });
+        
+        window.addEventListener('load', () => {
+            volumeControl.value = bgMusic.volume;
+            playbackRate.value = bgMusic.playbackRate;
+        });
     </script>
 </body>
 </html>
