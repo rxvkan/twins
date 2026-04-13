@@ -45,7 +45,7 @@
             width: auto;
             height: auto;
             z-index: -2;
-            filter: brightness(0.28) contrast(1.15) saturate(0) grayscale(1);
+            filter: brightness(0.28) contrast(1.15) saturate(1.1);
             object-fit: cover;
             transition: filter 0.8s ease;
         }
@@ -60,7 +60,6 @@
                         radial-gradient(circle at 85% 70%, rgba(40, 30, 45, 0.35) 0%, transparent 60%);
             z-index: -1;
             pointer-events: none;
-            filter: grayscale(1);
         }
 
         .splash-screen {
@@ -212,7 +211,7 @@
             height: 130px;
             margin: 0 auto 1.2rem;
             border-radius: 50%;
-            background: linear-gradient(125deg, #555, #222);
+            background: linear-gradient(125deg, #333333, #888888);
             padding: 3px;
             transition: transform 0.3s ease;
         }
@@ -227,7 +226,6 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid rgba(255, 255, 255, 0.2);
-            filter: grayscale(1);
         }
 
         .username {
@@ -472,16 +470,15 @@
             text-shadow: 0 0 4px rgba(255,255,255,0.3);
         }
 
-        .knowledge-wrapper {
+        .left-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
             position: relative;
-            display: inline-block;
         }
 
         .knowledge-btn {
-            position: absolute;
-            left: -120px;
-            top: 50%;
-            transform: translateY(-50%);
             background: var(--card-bg);
             backdrop-filter: blur(18px) saturate(160%);
             border: 1px solid var(--border-light);
@@ -496,18 +493,17 @@
             font-family: 'Inter', sans-serif;
             letter-spacing: 0.5px;
             white-space: nowrap;
-            z-index: 10;
         }
 
         .knowledge-btn:hover {
-            transform: translateY(-50%) scale(1.02);
+            transform: translateY(-4px);
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(255, 255, 255, 0.25);
         }
 
         .knowledge-panel {
             position: absolute;
-            left: -340px;
+            left: calc(100% + 1rem);
             top: 50%;
             transform: translateY(-50%);
             background: var(--card-bg);
@@ -576,19 +572,16 @@
             transform: translateX(4px);
         }
 
-        .first-card-container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        @media (max-width: 1000px) {
+        @media (max-width: 900px) {
+            .left-group {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                max-width: 400px;
+            }
             .knowledge-btn {
-                position: static;
-                transform: none;
-                margin-bottom: 1rem;
-                margin-left: 0;
-                display: inline-block;
+                text-align: center;
+                width: 100%;
             }
             .knowledge-panel {
                 position: fixed;
@@ -601,16 +594,6 @@
             }
             .knowledge-panel.visible {
                 transform: translate(-50%, -50%);
-            }
-            .first-card-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .knowledge-wrapper {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 1rem;
             }
         }
 
@@ -665,6 +648,7 @@
     <div class="start-button" id="startButton">
         <i class="fas fa-chevron-down start-icon"></i>
     </div>
+    <div class="hint-text">enter → experience</div>
 </div>
 
 <video autoplay muted loop id="video-bg">
@@ -680,19 +664,17 @@
 <main class="container" id="mainContainer">
     <div class="twins-text">twins</div>
 
-    <div class="first-card-container">
-        <div class="knowledge-wrapper">
-            <button class="knowledge-btn" id="knowledgeBtn"><i class="fas fa-code"></i> Knowledge</button>
-            <div class="knowledge-panel" id="knowledgePanel">
-                <div class="knowledge-title">⚡ tech stack</div>
-                <div class="skills-grid">
-                    <div class="skill-item"><i class="fas fa-database"></i> <span>SQL (MongoDB)</span></div>
-                    <div class="skill-item"><i class="fas fa-gamepad"></i> <span>LuaU (Roblox)</span></div>
-                    <div class="skill-item"><i class="fab fa-js"></i> <span>JS / NodeJS</span></div>
-                    <div class="skill-item"><i class="fab fa-react"></i> <span>React / Tailwind</span></div>
-                    <div class="skill-item"><i class="fab fa-html5"></i> <span>HTML / CSS</span></div>
-                    <div class="skill-item"><i class="fas fa-code"></i> <span>C++</span></div>
-                </div>
+    <div class="left-group">
+        <button class="knowledge-btn" id="knowledgeBtn"><i class="fas fa-code"></i> Knowledge</button>
+        <div class="knowledge-panel" id="knowledgePanel">
+            <div class="knowledge-title">⚡ tech stack</div>
+            <div class="skills-grid">
+                <div class="skill-item"><i class="fas fa-database"></i> <span>SQL (MongoDB)</span></div>
+                <div class="skill-item"><i class="fas fa-gamepad"></i> <span>LuaU (Roblox)</span></div>
+                <div class="skill-item"><i class="fab fa-js"></i> <span>JS / NodeJS</span></div>
+                <div class="skill-item"><i class="fab fa-react"></i> <span>React / Tailwind</span></div>
+                <div class="skill-item"><i class="fab fa-html5"></i> <span>HTML / CSS</span></div>
+                <div class="skill-item"><i class="fas fa-code"></i> <span>C++</span></div>
             </div>
         </div>
         <div class="profile-card">
@@ -878,7 +860,7 @@
                 document.documentElement.style.setProperty('--secondary', 'rgba(255, 255, 255, 0.7)');
                 document.documentElement.style.setProperty('--card-bg', 'rgba(20, 20, 28, 0.5)');
                 document.documentElement.style.setProperty('--background', 'rgba(12, 12, 18, 0.55)');
-                videoBg.style.filter = 'brightness(0.28) contrast(1.15) saturate(0) grayscale(1)';
+                videoBg.style.filter = 'brightness(0.28) contrast(1.15) saturate(1.1)';
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
             } else {
@@ -886,7 +868,7 @@
                 document.documentElement.style.setProperty('--secondary', 'rgba(20, 20, 30, 0.8)');
                 document.documentElement.style.setProperty('--card-bg', 'rgba(235, 235, 245, 0.7)');
                 document.documentElement.style.setProperty('--background', 'rgba(240, 240, 250, 0.45)');
-                videoBg.style.filter = 'brightness(0.65) contrast(1.05) saturate(0) grayscale(1)';
+                videoBg.style.filter = 'brightness(0.65) contrast(1.05) saturate(1.1)';
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
             }
