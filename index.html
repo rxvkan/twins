@@ -471,6 +471,120 @@
             text-shadow: 0 0 4px rgba(255,255,255,0.3);
         }
 
+        /* ===== KNOWLEDGE FEATURE (added, no extra comments) ===== */
+        .card-with-button {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+        .knowledge-btn {
+            background: var(--card-bg);
+            backdrop-filter: blur(18px) saturate(160%);
+            border: 1px solid var(--border-light);
+            border-radius: 2rem;
+            padding: 1rem 1.8rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-elevation);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .knowledge-btn:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .knowledge-panel {
+            position: absolute;
+            left: calc(100% + 1rem);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--card-bg);
+            backdrop-filter: blur(20px) saturate(170%);
+            border-radius: 2rem;
+            padding: 1.6rem;
+            width: 320px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-elevation);
+            transition: all 0.25s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .knowledge-panel.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .knowledge-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1.2rem;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.6rem 0.8rem;
+            border-radius: 1rem;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .skill-item i {
+            width: 28px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        .skill-item span {
+            color: var(--secondary);
+        }
+        .skill-item:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateX(4px);
+        }
+        @media (max-width: 900px) {
+            .card-with-button {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+            .knowledge-btn {
+                text-align: center;
+                width: 100%;
+            }
+            .knowledge-panel {
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 85%;
+                max-width: 320px;
+                z-index: 1200;
+            }
+            .knowledge-panel.visible {
+                transform: translate(-50%, -50%);
+            }
+        }
+
         @media (max-width: 780px) {
             .container {
                 gap: 1.8rem;
@@ -507,6 +621,9 @@
             .badge {
                 font-size: 0.7rem;
             }
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -535,19 +652,33 @@
 <main class="container" id="mainContainer">
     <div class="twins-text">twins</div>
 
-    <div class="profile-card">
-        <div class="profile-header">
-            <div class="profile-pic-container">
-                <img src="img/avatar.png" class="profile-pic" alt="rakan">
+    <div class="card-with-button">
+        <button class="knowledge-btn" id="knowledgeBtn"><i class="fas fa-code"></i> Knowledge</button>
+        <div class="knowledge-panel" id="knowledgePanel">
+            <div class="knowledge-title">⚡ tech stack</div>
+            <div class="skills-grid">
+                <div class="skill-item"><i class="fas fa-database"></i> <span>SQL (MongoDB)</span></div>
+                <div class="skill-item"><i class="fas fa-gamepad"></i> <span>LuaU (Roblox)</span></div>
+                <div class="skill-item"><i class="fab fa-js"></i> <span>JS / NodeJS</span></div>
+                <div class="skill-item"><i class="fab fa-react"></i> <span>React / Tailwind</span></div>
+                <div class="skill-item"><i class="fab fa-html5"></i> <span>HTML / CSS</span></div>
+                <div class="skill-item"><i class="fas fa-code"></i> <span>C++</span></div>
             </div>
-            <h1 class="username">rakan</h1>
-            <div class="badge">ufgg</div>
         </div>
-        <div class="details">
-            <p>5+ years as a dev<br>
-            i script some things<br>
-            software engineer<br>
-            pt-br</p>
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-pic-container">
+                    <img src="img/avatar.png" class="profile-pic" alt="rakan">
+                </div>
+                <h1 class="username">rakan</h1>
+                <div class="badge">ufgg</div>
+            </div>
+            <div class="details">
+                <p>5+ years as a dev<br>
+                i script some things<br>
+                software engineer<br>
+                pt-br</p>
+            </div>
         </div>
     </div>
 
@@ -797,6 +928,24 @@
                 if (mainContainer.classList.contains('visible')) initParticles();
             }, 200);
         });
+
+        // ========== KNOWLEDGE BUTTON LOGIC (added, no extra comments) ==========
+        const knowledgeBtn = document.getElementById('knowledgeBtn');
+        const knowledgePanel = document.getElementById('knowledgePanel');
+        if (knowledgeBtn && knowledgePanel) {
+            knowledgeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                knowledgePanel.classList.toggle('visible');
+            });
+            document.addEventListener('click', (e) => {
+                if (knowledgePanel.classList.contains('visible') && 
+                    !knowledgePanel.contains(e.target) && 
+                    e.target !== knowledgeBtn && 
+                    !knowledgeBtn.contains(e.target)) {
+                    knowledgePanel.classList.remove('visible');
+                }
+            });
+        }
     })();
 </script>
 </body>
