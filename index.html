@@ -45,7 +45,7 @@
             width: auto;
             height: auto;
             z-index: -2;
-            filter: brightness(0.28) contrast(1.15) saturate(1.1);
+            filter: brightness(0.3) contrast(1.2) grayscale(1);
             object-fit: cover;
             transition: filter 0.8s ease;
         }
@@ -60,6 +60,7 @@
                         radial-gradient(circle at 85% 70%, rgba(40, 30, 45, 0.35) 0%, transparent 60%);
             z-index: -1;
             pointer-events: none;
+            filter: grayscale(1);
         }
 
         .splash-screen {
@@ -211,7 +212,7 @@
             height: 130px;
             margin: 0 auto 1.2rem;
             border-radius: 50%;
-            background: linear-gradient(125deg, #333333, #888888);
+            background: linear-gradient(125deg, #444, #aaa);
             padding: 3px;
             transition: transform 0.3s ease;
         }
@@ -470,14 +471,6 @@
             text-shadow: 0 0 4px rgba(255,255,255,0.3);
         }
 
-        .left-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 1.5rem;
-            position: relative;
-        }
-
         .knowledge-btn {
             background: var(--card-bg);
             backdrop-filter: blur(18px) saturate(160%);
@@ -493,6 +486,7 @@
             font-family: 'Inter', sans-serif;
             letter-spacing: 0.5px;
             white-space: nowrap;
+            position: relative;
         }
 
         .knowledge-btn:hover {
@@ -503,7 +497,7 @@
 
         .knowledge-panel {
             position: absolute;
-            left: calc(100% + 1rem);
+            right: calc(100% + 1rem);
             top: 50%;
             transform: translateY(-50%);
             background: var(--card-bg);
@@ -573,27 +567,27 @@
         }
 
         @media (max-width: 900px) {
-            .left-group {
-                flex-direction: column;
-                align-items: stretch;
-                width: 100%;
-                max-width: 400px;
-            }
             .knowledge-btn {
-                text-align: center;
+                order: -1;
+                margin-bottom: 1rem;
                 width: 100%;
+                text-align: center;
             }
             .knowledge-panel {
                 position: fixed;
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%);
+                right: auto;
                 width: 85%;
                 max-width: 320px;
                 z-index: 1200;
             }
             .knowledge-panel.visible {
                 transform: translate(-50%, -50%);
+            }
+            .container {
+                flex-direction: column;
             }
         }
 
@@ -664,7 +658,7 @@
 <main class="container" id="mainContainer">
     <div class="twins-text">twins</div>
 
-    <div class="left-group">
+    <div style="position: relative;">
         <button class="knowledge-btn" id="knowledgeBtn"><i class="fas fa-code"></i> Knowledge</button>
         <div class="knowledge-panel" id="knowledgePanel">
             <div class="knowledge-title">⚡ tech stack</div>
@@ -677,20 +671,21 @@
                 <div class="skill-item"><i class="fas fa-code"></i> <span>C++</span></div>
             </div>
         </div>
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="profile-pic-container">
-                    <img src="img/avatar.png" class="profile-pic" alt="rakan">
-                </div>
-                <h1 class="username">rakan</h1>
-                <div class="badge">ufgg</div>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-pic-container">
+                <img src="img/avatar.png" class="profile-pic" alt="rakan">
             </div>
-            <div class="details">
-                <p>5+ years as a dev<br>
-                i script some things<br>
-                software engineer<br>
-                pt-br</p>
-            </div>
+            <h1 class="username">rakan</h1>
+            <div class="badge">ufgg</div>
+        </div>
+        <div class="details">
+            <p>5+ years as a dev<br>
+            i script some things<br>
+            software engineer<br>
+            pt-br</p>
         </div>
     </div>
 
@@ -860,7 +855,7 @@
                 document.documentElement.style.setProperty('--secondary', 'rgba(255, 255, 255, 0.7)');
                 document.documentElement.style.setProperty('--card-bg', 'rgba(20, 20, 28, 0.5)');
                 document.documentElement.style.setProperty('--background', 'rgba(12, 12, 18, 0.55)');
-                videoBg.style.filter = 'brightness(0.28) contrast(1.15) saturate(1.1)';
+                videoBg.style.filter = 'brightness(0.3) contrast(1.2) grayscale(1)';
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
             } else {
@@ -868,7 +863,7 @@
                 document.documentElement.style.setProperty('--secondary', 'rgba(20, 20, 30, 0.8)');
                 document.documentElement.style.setProperty('--card-bg', 'rgba(235, 235, 245, 0.7)');
                 document.documentElement.style.setProperty('--background', 'rgba(240, 240, 250, 0.45)');
-                videoBg.style.filter = 'brightness(0.65) contrast(1.05) saturate(1.1)';
+                videoBg.style.filter = 'brightness(0.65) contrast(1.05) grayscale(1)';
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
             }
